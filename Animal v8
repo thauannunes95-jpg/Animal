@@ -1,0 +1,211 @@
+--[[ 
+    DARKZIN HUB V5 - ULTIMATE EDITION
+    Game: Animal Simulator
+    Key: DARK
+    Executor: Delta / Fluxus / Hydrogen
+]]
+
+local KeyCorrect = "DARK"
+local UserKey = ""
+
+-- Interface do KeySystem
+local KeyGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local KeyInput = Instance.new("TextBox")
+local Submit = Instance.new("TextButton")
+
+KeyGui.Name = "DarkzinKeySystem"
+KeyGui.Parent = game:GetService("CoreGui")
+KeyGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = KeyGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+MainFrame.BorderSizePixel = 0
+MainFrame.Position = UDim2.new(0.5, -100, 0.5, -75)
+MainFrame.Size = UDim2.new(0, 200, 0, 150)
+
+Title.Name = "Title"
+Title.Parent = MainFrame
+Title.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.Font = Enum.Font.GothamBold
+Title.Text = "DARKZIN HUB - KEY"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 14.000
+
+KeyInput.Name = "KeyInput"
+KeyInput.Parent = MainFrame
+KeyInput.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+KeyInput.Position = UDim2.new(0.1, 0, 0.3, 0)
+KeyInput.Size = UDim2.new(0.8, 0, 0, 35)
+KeyInput.Font = Enum.Font.Gotham
+KeyInput.PlaceholderText = "Insira a Key aqui..."
+KeyInput.Text = ""
+KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyInput.TextSize = 14.000
+
+Submit.Name = "Submit"
+Submit.Parent = MainFrame
+Submit.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+Submit.Position = UDim2.new(0.1, 0, 0.6, 0)
+Submit.Size = UDim2.new(0.8, 0, 0, 35)
+Submit.Font = Enum.Font.GothamBold
+Submit.Text = "VERIFICAR"
+Submit.TextColor3 = Color3.fromRGB(255, 255, 255)
+Submit.TextSize = 14.000
+
+-- Lógica de Verificação
+Submit.MouseButton1Click:Connect(function()
+    if KeyInput.Text == KeyCorrect then
+        KeyGui:Destroy()
+        loadstring(game:HttpGet("https://sirius.menu/gen2"))() -- Carrega a Lib de UI
+        
+        local Library = loadstring(game:HttpGet("https://sirius.menu/gen2"))():CreateWindow({
+            name = "DARKZIN HUB | Animal Simulator",
+            subtitle = "The Best Script in Town",
+            theme = "dark"
+        })
+
+        local MainTab = Library:CreateTab({ name = "Farm & Combat", icon = 125626312718314 })
+        local PlayerTab = Library:CreateTab({ name = "Player", icon = 125626312718314 })
+
+        -- Variáveis Globais
+        getgenv().AutoFarmCoins = false
+        getgenv().KillAura = false
+        getgenv().WalkSpeed = 16
+        getgenv().WalkSpeed = 16
+        getgenv().AutoEat = false
+        getgenv().AutoDrink = false
+        getgenv().AutoFarmLevel = false
+        -- Função de Movimentação Segura (Tween)
+        local function safeTeleport(targetCFrame)
+            local ts = game:GetService("TweenService")
+            local char = game.Players.LocalPlayer.Character
+            if char and char:FindFirstChild("HumanoidRootPart") then
+                local tween = ts:Create(char.HumanoidRootPart, TweenInfo.new(0.5, Enum.EasingStyle.Linear), {CFrame = targetCFrame})
+                tween:Play()
+                tween.Completed:Wait()
+            end
+        end
+
+        -- Loop de Auto-Farm de Moedas
+        -- Loop de Auto-Farm de Moedas (Spawn/Instant Collect)
+        task.spawn(function()
+            while task.wait() do
+                if getgenv().AutoFarmCoins then
+                    for _, v in pairs(game.Workspace:GetDescendants()) do
+                        if not getgenv().AutoFarmCoins then break end
+                        if v.Name == "Coin" and v:IsA("BasePart") then
+                             v.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+                            task.wait(0.25) -- Delay sequencial para o servidor registrar cada moeda
+                        end
+                    end
+                end
+            end
+        end)
+
+        -- Loop de Kill Aura (Ataca NPCs próximos)
+        -- Função de Ataque Universal
+        local function performAttack()
+            game:GetService("VirtualUser"):CaptureController()
+            game:GetService("VirtualUser"):Button1Down(Vector2.new(0,0))
+            task.wait(0.05)
+            game:GetService("VirtualUser"):Button1Up(Vector2.new(0,0))
+        end
+
+        -- Loop de Kill Aura
+        task.spawn(function() 
+            while task.wait() do
+                if getgenv().KillAura then
+                    for _, v in pairs(game.Workspace:GetChildren()) do
+                        if v:FindFirstChild("Humanoid") and v ~= game.Players.LocalPlayer.Character then
+                            local dist = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.HumanoidRootPart.Position).Magnitude
+                            if dist < 20 then
+                                performAttack()
+                                task.wait(0.1)
+                            end
+                        end
+                    end
+                end
+            end
+        end)
+
+        -- Loop de Auto-Farm Level (Auto-Dummy)
+        -- Loop de Auto-Farm Level (Auto-Dummy com Ataque Contínuo)
+        task.spawn(function()
+            while task.wait() do
+                if getgenv().AutoFarmLevel then
+                    for _, v in pairs(game.Workspace:GetDescendants()) do
+                        if not getgenv().AutoFarmLevel then break end
+                        if (v.Name == "Dummy" or v.Name == "TrainingDummy") and v:FindFirstChild("HumanoidRootPart") then
+                            safeTeleport(v.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3))
+                            while getgenv().AutoFarmLevel and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 do
+                                game:GetService("VirtualUser"):CaptureController()
+                                game:GetService("VirtualUser"):Button1Down(Vector2.new(0,0))
+                                task.wait(0.1)
+                                game:GetService("VirtualUser"):Button1Up(Vector2.new(0,0))
+                                task.wait(0.1)
+                            end
+                            break
+                        end
+                    end
+                end
+            end
+        end)
+
+
+        -- UI Elements
+        MainTab:CreateToggle({
+            name = "Auto-Farm Moedas (Safe)",
+            currentValue = false,
+            callback = function(Value) getgenv().AutoFarmCoins = Value end
+        })
+
+        MainTab:CreateToggle({
+            name = "Kill Aura (Auto-Attack)",
+            currentValue = false,
+            callback = function(Value) getgenv().KillAura = Value end
+        })
+
+        -- Removido Toggle duplicado de Kill Aura
+
+        MainTab:CreateToggle({
+            name = "Auto-Farm Level (Dummy)",
+            currentValue = false,
+            callback = function(Value) getgenv().AutoFarmLevel = Value end
+        })
+
+        PlayerTab:CreateSlider({
+            name = "Velocidade",
+            range = {16, 300},
+            increment = 1,
+            currentValue = 16,
+            callback = function(Value) 
+                getgenv().WalkSpeed = Value
+                game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value 
+            end
+        })
+
+        PlayerTab:CreateToggle({
+            name = "Pulo Infinito",
+            currentValue = false,
+            callback = function(Value)
+                _G.InfJump = Value
+                game:GetService("UserInputService").JumpRequest:Connect(function()
+                    if _G.InfJump then
+                        game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+                    end
+                end)
+            end
+        })
+
+    else
+        Submit.Text = "KEY INCORRETA!"
+        Submit.BackgroundColor3 = Color3.fromRGB(100, 0, 0)
+        task.wait(2)
+        Submit.Text = "VERIFICAR"
+        Submit.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+    end
+end)
